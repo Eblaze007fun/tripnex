@@ -1,0 +1,130 @@
+// Version: 1.0.0
+type BookingStatus__46562999 = {#cancelled; #confirmed};
+type Booking__963853967 =
+  {
+    bookingRef : Text;
+    createdAt : Timestamp__301639476;
+    flight : FlightResult__954289343;
+    passengers : [PassengerDetails__326053904];
+    status : BookingStatus__46562999;
+    userId : UserId__158757552
+  };
+type CabinClass__589849087 = {#business; #economy; #first};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type FieldAnswer__909182804 = {fieldId : Text; value : Text};
+type FieldOption__757622996 = {optionLabel : Text; value : Text};
+type FieldType__535817183 =
+  {#checkbox; #dropdown; #email; #number; #text; #textarea};
+type FlightPrice__359915173 = {amount : Float; currency : Text};
+type FlightResult__954289343 =
+  {
+    airline : Text;
+    arrivalTime : Text;
+    availableSeats : Nat;
+    cabinClass : CabinClass__589849087;
+    departureTime : Text;
+    destinationCode : Text;
+    durationMinutes : Nat;
+    flightId : Text;
+    flightNumber : Text;
+    originCode : Text;
+    price : FlightPrice__359915173;
+    stops : Nat
+  };
+type FormField__1070193069 =
+  {
+    fieldLabel : Text;
+    fieldType : FieldType__535817183;
+    id : Text;
+    options : [FieldOption__757622996];
+    order : Nat;
+    placeholder : Text;
+    required : Bool
+  };
+type FormId__292948109 = Text;
+type FormResponse__610608894 =
+  {
+    answers : [FieldAnswer__909182804];
+    formId : FormId__292948109;
+    id : ResponseId__537169765;
+    submittedAt : Timestamp__301639476
+  };
+type FormStatus__856537756 = {#draft; #published};
+type Form__519346290 =
+  {
+    createdAt : Timestamp__301639476;
+    description : Text;
+    fields : [FormField__1070193069];
+    id : FormId__292948109;
+    owner : UserId__158757552;
+    status : FormStatus__856537756;
+    title : Text;
+    updatedAt : Timestamp__301639476
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type PassengerDetails__326053904 =
+  {
+    email : Text;
+    firstName : Text;
+    lastName : Text;
+    phone : Text;
+    seatPreference : SeatPreference__368419198
+  };
+type ResponseId__537169765 = Nat;
+type SeatPreference__368419198 = {#aisle; #middle; #none; #window};
+type Timestamp__301639476 = Int;
+type UserId__158757552 = Principal;
+actor {
+  stable adminPrincipal : Principal;
+  stable apiKeyState : {var aviationstackKey : ?Text};
+  stable bookingCounter : {var value : Nat};
+  stable bookings :
+    {
+      var root : Node__46230540<Text, Booking__963853967>;
+      var size : Nat__490723111
+    };
+  stable formIdCounter : {var value : Nat};
+  stable forms :
+    {
+      var root : Node__46230540<FormId__292948109, Form__519346290>;
+      var size : Nat__490723111
+    };
+  stable nextResponseId : {var value : Nat};
+  stable responseCounts :
+    {
+      var root : Node__46230540<FormId__292948109, Nat>;
+      var size : Nat__490723111
+    };
+  stable responses :
+    {
+      var root :
+        Node__46230540<FormId__292948109,
+                        List__415060402<FormResponse__610608894>>;
+      var size : Nat__490723111
+    };
+  stable sampledUsers :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?UserId__158757552]];
+      var elementIndex : Nat__490723111
+    };
+  stable userBookings :
+    {
+      var root : Node__46230540<Principal, List__415060402<Text>>;
+      var size : Nat__490723111
+    }
+};

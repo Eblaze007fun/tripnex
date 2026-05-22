@@ -1,0 +1,199 @@
+type UserId = principal;
+type UpdateFormInput = 
+ record {
+   description: text;
+   fields: vec FormField;
+   title: text;
+ };
+type TripType = 
+ variant {
+   oneWay;
+   roundTrip;
+ };
+type Timestamp = int;
+type SubmitResponseInput = 
+ record {
+   answers: vec FieldAnswer;
+   formId: FormId;
+ };
+type SeatPreference = 
+ variant {
+   aisle;
+   middle;
+   none;
+   window;
+ };
+type ResponseId = nat;
+type PopularRoute = 
+ record {
+   destination: Airport;
+   origin: Airport;
+   typicalPrice: opt FlightPrice;
+ };
+type PassengerDetails = 
+ record {
+   email: text;
+   firstName: text;
+   lastName: text;
+   phone: text;
+   seatPreference: SeatPreference;
+ };
+type PassengerCounts = 
+ record {
+   adults: nat;
+   children: nat;
+   infants: nat;
+ };
+type FormSummary = 
+ record {
+   createdAt: Timestamp;
+   description: text;
+   id: FormId;
+   responseCount: nat;
+   status: FormStatus;
+   title: text;
+   updatedAt: Timestamp;
+ };
+type FormStatus = 
+ variant {
+   draft;
+   published;
+ };
+type FormResponse = 
+ record {
+   answers: vec FieldAnswer;
+   formId: FormId;
+   id: ResponseId;
+   submittedAt: Timestamp;
+ };
+type FormId = text;
+type FormField = 
+ record {
+   fieldLabel: text;
+   fieldType: FieldType;
+   id: text;
+   options: vec FieldOption;
+   order: nat;
+   placeholder: text;
+   required: bool;
+ };
+type Form = 
+ record {
+   createdAt: Timestamp;
+   description: text;
+   fields: vec FormField;
+   id: FormId;
+   owner: UserId;
+   status: FormStatus;
+   title: text;
+   updatedAt: Timestamp;
+ };
+type FlightSearchParams = 
+ record {
+   cabinClass: CabinClass;
+   departureDate: text;
+   destination: text;
+   origin: text;
+   passengers: PassengerCounts;
+   returnDate: opt text;
+   tripType: TripType;
+ };
+type FlightResult = 
+ record {
+   airline: text;
+   arrivalTime: text;
+   availableSeats: nat;
+   cabinClass: CabinClass;
+   departureTime: text;
+   destinationCode: text;
+   durationMinutes: nat;
+   flightId: text;
+   flightNumber: text;
+   originCode: text;
+   price: FlightPrice;
+   stops: nat;
+ };
+type FlightPrice = 
+ record {
+   amount: float64;
+   currency: text;
+ };
+type FieldType = 
+ variant {
+   checkbox;
+   dropdown;
+   email;
+   number;
+   "text";
+   textarea;
+ };
+type FieldOption = 
+ record {
+   optionLabel: text;
+   value: text;
+ };
+type FieldAnswer = 
+ record {
+   fieldId: text;
+   value: text;
+ };
+type CreateFormInput = 
+ record {
+   description: text;
+   fields: vec FormField;
+   title: text;
+ };
+type CreateBookingInput = 
+ record {
+   flight: FlightResult;
+   passengers: vec PassengerDetails;
+ };
+type CabinClass = 
+ variant {
+   business;
+   economy;
+   first;
+ };
+type BookingStatus = 
+ variant {
+   cancelled;
+   confirmed;
+ };
+type Booking = 
+ record {
+   bookingRef: text;
+   createdAt: Timestamp;
+   flight: FlightResult;
+   passengers: vec PassengerDetails;
+   status: BookingStatus;
+   userId: UserId;
+ };
+type Airport = 
+ record {
+   city: text;
+   code: text;
+   country: text;
+ };
+service : {
+  cancelBooking: (bookingRef: text) -> (bool);
+  createBooking: (input: CreateBookingInput) -> (Booking);
+  createForm: (input: CreateFormInput) -> (Form);
+  deleteForm: (formId: FormId) -> (bool);
+  duplicateForm: (formId: FormId) -> (opt Form);
+  exportResponsesCsv: (formId: FormId) -> (text);
+  getAviationstackApiKey: () -> (opt text);
+  getBookingByRef: (ref: text) -> (opt Booking) query;
+  getForm: (formId: FormId) -> (opt Form);
+  getPopularRoutes: () -> (vec PopularRoute) query;
+  getPublishedForm: (formId: FormId) -> (opt Form) query;
+  getResponses: (formId: FormId) -> (vec FormResponse);
+  getUserBookings: () -> (vec Booking) query;
+  listForms: () -> (vec FormSummary);
+  publishForm: (formId: FormId) -> (opt Form);
+  searchAirports: (searchTerm: text) -> (vec Airport) query;
+  searchFlights: (params: FlightSearchParams) -> (vec FlightResult) query;
+  setAviationstackApiKey: (key: text) -> ();
+  submitResponse: (input: SubmitResponseInput) -> (FormResponse);
+  unpublishForm: (formId: FormId) -> (opt Form);
+  updateForm: (formId: FormId, input: UpdateFormInput) -> (opt Form);
+}
